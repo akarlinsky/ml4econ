@@ -1,0 +1,3028 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "ae" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1.5cm
+\topmargin 1.5cm
+\rightmargin 1.5cm
+\bottommargin 1.5cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip smallskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+R stuff to remember 
+\end_layout
+
+\begin_layout Author
+Ariel Karlinsky
+\end_layout
+
+\begin_layout Itemize
+?function - opens the help for this function.
+ for example: ?factor, ?lm
+\end_layout
+
+\begin_layout Itemize
+class(x) function - returns the type of var x: numeric, string, logicaletc.
+ 
+\end_layout
+
+\begin_layout Itemize
+Recoding variables (simmilar to Stata's recode): 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+data$age_groups <- recode(data$age, "18:19='18to19'; 20:29='20to209'; 30:30='30t
+o39'")
+\end_layout
+
+\begin_layout Plain Layout
+
+data$age_groups <- as.factor(data$age_groups)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+The equivalent of Stata inrange is between(): 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+df %>% filter(between(v2, 3, 5))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Missing values in R are special values that represents epistemic uncertainty.
+ unlike in Stata when they are coded as 
+\begin_inset Formula $+\infty$
+\end_inset
+
+.
+ is.na() returns TRUE if value is missing.
+ to select non missing use !is.na()
+\end_layout
+
+\begin_layout Itemize
+Enviorments:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+An environment is just a place to store variables – a set of bindings between
+ symbols and objects.
+\end_layout
+
+\begin_layout Itemize
+access global enviorment by globalenv()
+\end_layout
+
+\begin_layout Itemize
+create new enviorment with new.env()
+\end_layout
+
+\begin_layout Itemize
+several functions have an optional envir= option to create object in a specific
+ environment.
+ example: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+assign("a", 999, envir=my.env)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+see more: https://www.r-bloggers.com/environments-in-r/
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Boolean operators:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x < y, TRUE if x is less than y
+\end_layout
+
+\begin_layout Itemize
+x <= y, TRUE if x is less than or equal to y
+\end_layout
+
+\begin_layout Itemize
+x == y, TRUE if x equals y
+\end_layout
+
+\begin_layout Itemize
+x != y, TRUE if x does not equal y
+\end_layout
+
+\begin_layout Itemize
+x >= y, TRUE if x is greater than or equal to y
+\end_layout
+
+\begin_layout Itemize
+x > y, TRUE if x is greater than y
+\end_layout
+
+\begin_layout Itemize
+x %in% c(a, b, c), TRUE if x is in the vector c(a, b, c)
+\end_layout
+
+\begin_layout Itemize
+is.na() - missing values.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+c(n1,n2,...N) function - the combine function.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+defines vectors: for example: c(3,2,1) creates the vector 
+\begin_inset Formula $(3,2,1)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+used whenever we wish to pass more than one element to funciton, for example:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+poker_vector[c("Monday","Tuesday")]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+names(vector) function - gives names to the vector elemnts.
+ for example: names(some_vector) <- c(
+\begin_inset Quotes eld
+\end_inset
+
+Sunday
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Monday
+\begin_inset Quotes erd
+\end_inset
+
+).
+\begin_inset Newline newline
+\end_inset
+
+We can create a vector of names and then transfer it to the names function
+ for ease of execution so:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+days_vector <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
+\end_layout
+
+\begin_layout Plain Layout
+
+names(poker_vector) <- days_vector   
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Vector addition is element-wise:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+v1 <- c(1, 2, 3)
+\end_layout
+
+\begin_layout Plain Layout
+
+v2 <- c(4, 5, 6)
+\end_layout
+
+\begin_layout Plain Layout
+
+v3 <- v1 + v2
+\end_layout
+
+\begin_layout Plain Layout
+
+#v3 is (5,7,9)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Subset selection:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+v[n] - selects the n element of vector v.
+ Note: first element index is 1 (not zero).
+ 
+\end_layout
+
+\begin_layout Itemize
+v[n1,n2] - selects the n1 and n2 elements of vector v.
+\end_layout
+
+\begin_layout Itemize
+v[n1:n2] - selects the elements n1 to n2 of vector v.
+\end_layout
+
+\begin_layout Itemize
+v[
+\begin_inset Quotes eld
+\end_inset
+
+Monday
+\begin_inset Quotes erd
+\end_inset
+
+] - selects the elemnt named 
+\begin_inset Quotes eld
+\end_inset
+
+Monday
+\begin_inset Quotes erd
+\end_inset
+
+ of vector v.
+\end_layout
+
+\begin_layout Itemize
+matrix[1,2] - selects the elemnt in the first row and second column of the
+ matrix.
+\end_layout
+
+\begin_layout Itemize
+matrix[1:3,2:4] - selects the sub-matrix with the data on rows 1,2,3 and
+ column 2,3,4.
+\end_layout
+
+\begin_layout Itemize
+matrix[,1] - selects all elements in the first column.
+\end_layout
+
+\begin_layout Itemize
+matrix[3,] - selects all elements in the third row.
+\end_layout
+
+\begin_layout Itemize
+df[1:3,
+\begin_inset Quotes erd
+\end_inset
+
+type
+\begin_inset Quotes erd
+\end_inset
+
+] - selects the first 3 observations in column/variable 
+\begin_inset Quotes eld
+\end_inset
+
+type
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+df$type - selects the 
+\begin_inset Quotes eld
+\end_inset
+
+type
+\begin_inset Quotes erd
+\end_inset
+
+ variable vector from dataframe df.
+\end_layout
+
+\begin_layout Itemize
+subset(df, subset = some_condition) - selects a subset of data df based
+ on condition.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Naming matrix rows and columns:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+rownames(my_matrix) <- row_names_vector
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(my_matrix) <- col_names_vector
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+cbind(m1, v2,...) - merges matrices or vectors by columns OR bind vectors v2...
+ to matrix m1.
+\end_layout
+
+\begin_layout Itemize
+rbind(m1, v2,...) - merges matrices or vectors by rows OR bind vectors v2...
+ to matrix m1.
+\end_layout
+
+\begin_layout Itemize
+Matrix operations:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Element wise: mat1 + mat2, mat1 * mat2
+\end_layout
+
+\begin_layout Itemize
+Matrix multiplication: mat1 %*% mat2
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Factor variables: If a vector has string data for level of factor, create
+ a factor varaible with factor() function:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+sex_vector <- c("Male","Female","Female","Male","Male")
+\end_layout
+
+\begin_layout Plain Layout
+
+factor_sex_vector <- factor(sex_vector) 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Factor variables can be ordinal:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+temperature_vector <- c("High", "Low", "High","Low", "Medium")
+\end_layout
+
+\begin_layout Plain Layout
+
+factor_temperature_vector <- factor(temperature_vector, order = TRUE, levels
+ = c("Low", "Medium", "High"))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Change levels of factor variable.
+ For example change levels from 
+\begin_inset Quotes eld
+\end_inset
+
+F
+\backslash
+M
+\begin_inset Quotes erd
+\end_inset
+
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+Female/Male
+\begin_inset Quotes erd
+\end_inset
+
+:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+survey_vector <- factor(c("M", "F", "F", "M", "M"))
+\end_layout
+
+\begin_layout Plain Layout
+
+levels(survey_vector)
+\end_layout
+
+\begin_layout Plain Layout
+
+[1] "F" "M"
+\end_layout
+
+\begin_layout Plain Layout
+
+levels(survey_vector) <- c("Female", "Male")
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+expand.grid(vec1, vec2) - creates a dataframe from all combinations of the
+ supplied vectors.
+\end_layout
+
+\begin_layout Itemize
+weighted.mean(x=,w=) - a weighted mean of x using weights w.
+ w and x must be of same length.
+ 
+\end_layout
+
+\begin_layout Itemize
+summary() function:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+On a factor variable: The number of observations corrosponding to each level
+\end_layout
+
+\begin_layout Itemize
+On a continous variable:
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+data.frame(v1,v2,..vn) - creates a dataframe from vectors v1 to vn.
+\end_layout
+
+\begin_layout Itemize
+head(data, n) - show the first n observations in data
+\end_layout
+
+\begin_layout Itemize
+tail(data, n) - show the last n observations in data
+\end_layout
+
+\begin_layout Itemize
+str(data) - shows the structure of the dataset data: number of observations
+ and variables, variable names and data types.
+\end_layout
+
+\begin_layout Itemize
+order(v1) - gives the rank position of each element in vector v1
+\end_layout
+
+\begin_layout Itemize
+list(c1, c2, c3) - creates a list containing components c1, c2 and c3my_.
+ a list is some kind super data type: you can store practically any piece
+ of information in it!
+\end_layout
+
+\begin_layout Itemize
+list(name1=c1, name2=c2) - create a list containing components c1 and c2,
+ named name1 and name2.
+\end_layout
+
+\begin_layout Itemize
+list[[1]] - selects the first component of list 
+\end_layout
+
+\begin_layout Itemize
+list[[
+\begin_inset Quotes eld
+\end_inset
+
+reviews
+\begin_inset Quotes erd
+\end_inset
+
+]] - selects the 
+\begin_inset Quotes eld
+\end_inset
+
+reviews
+\begin_inset Quotes erd
+\end_inset
+
+ componenet of list
+\end_layout
+
+\begin_layout Itemize
+list$reviews - selects the 
+\begin_inset Quotes eld
+\end_inset
+
+reviews
+\begin_inset Quotes erd
+\end_inset
+
+ componenet of list
+\end_layout
+
+\begin_layout Itemize
+Rstudio:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+ctrl+L: clears console.
+\end_layout
+
+\begin_layout Itemize
+Up arrow - show last commands
+\end_layout
+
+\begin_layout Itemize
+command + Up arrow - show last commands corropsoding to command.
+\end_layout
+
+\begin_layout Itemize
+Tab: auto-complete
+\end_layout
+
+\begin_layout Itemize
+Ctrl+Enter: run selected code
+\end_layout
+
+\begin_layout Itemize
+Ctrl+Shift+S: run all code
+\end_layout
+
+\begin_layout Itemize
+setwd(path) - sets the working directory to path.
+\end_layout
+
+\begin_layout Itemize
+getwd() - show working directory
+\end_layout
+
+\begin_layout Itemize
+library(ggplot2) - loads the package
+\end_layout
+
+\begin_layout Itemize
+detach(ggplot2) - unloads the package
+\end_layout
+
+\begin_layout Itemize
+F1 (when selecting pacakgage name) - opens help
+\end_layout
+
+\begin_layout Itemize
+Can publish to rpubs (dynamic graphs?) or shinyapps.io for shiny apps.
+\end_layout
+
+\begin_layout Itemize
+Ctrl+Shift+m - pipe operator %>%
+\end_layout
+
+\begin_layout Itemize
+Alt+- - assignment operator <-
+\end_layout
+
+\begin_layout Itemize
+Ctrl+Shift+C - comment out
+\end_layout
+
+\begin_layout Itemize
+Help - keyboard shourtcuts - shows all keyboard shortcuts.
+\end_layout
+
+\begin_layout Itemize
+Extract function: create a block of code that you would want to repeat.
+ for example:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+center <- function(x){
+\end_layout
+
+\begin_layout Plain Layout
+
+	x - mean(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+rescale <- function(x){
+\end_layout
+
+\begin_layout Plain Layout
+
+	x / sd(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+rescale(center(x))
+\end_layout
+
+\end_inset
+
+highlight rescale(center(x)) then take the wand icon and select extract,
+ name the function - and voila!
+\end_layout
+
+\begin_layout Itemize
+Ctrl+Alt+Up arrow - create multiple cursors for some unknown insane reason.
+\end_layout
+
+\begin_layout Itemize
+Ctrl+Alt+ highlight places in code - create multiple cursors.
+\end_layout
+
+\begin_layout Itemize
+Shift+Alt+G - jump to specific row in script.
+\end_layout
+
+\begin_layout Itemize
+Alt + o (not zero) - close all script folds.
+\end_layout
+
+\begin_layout Itemize
+Alt + p - go to closing bracket of selected open bracket.
+ 
+\end_layout
+
+\begin_layout Itemize
+Control+Shift+F10 - restart R session.
+\end_layout
+
+\begin_layout Itemize
+Select left of the row number to toggle a breakpoint.
+ 
+\end_layout
+
+\begin_layout Itemize
+In a project, Ctrl+Shift+F searches in all files in the project.
+\end_layout
+
+\begin_layout Itemize
+Ctrl+C - interrupt execution.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+%>% - pipe operator
+\end_layout
+
+\begin_layout Itemize
+break - breaks a while loop.
+\end_layout
+
+\begin_layout Itemize
+next - skip to the next interation
+\end_layout
+
+\begin_layout Itemize
+for i in 1:N - loops over until i is equal to N.
+\end_layout
+
+\begin_layout Itemize
+search() - shows the currently attached packages.
+\end_layout
+
+\begin_layout Itemize
+lapply(data, function) - applies function to each element in data.
+ input can be of any data type.
+ returns a list.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+lapply can also be used with a user function with more inputs: lapply(data,
+ function_name, additonal_arg=x)
+\end_layout
+
+\begin_layout Itemize
+lapply can also be used with multiple line functions defined within it:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+lapply(split_low, function(x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  if (nchar(x[1]) > 5) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    return(NULL)
+\end_layout
+
+\begin_layout Plain Layout
+
+  } else {
+\end_layout
+
+\begin_layout Plain Layout
+
+    return(x[2])
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+unlist(list) - turns list to a vector.
+ can be applied for example with lapply so that it returns a vector instead
+ of a list.
+\end_layout
+
+\begin_layout Itemize
+sapply(data, function) - 
+\begin_inset Quotes eld
+\end_inset
+
+simplified apply
+\begin_inset Quotes erd
+\end_inset
+
+ - just like lapply, but when data is of a single data type.
+ tries to simplify list to array.
+ 
+\end_layout
+
+\begin_layout Itemize
+vapply(data, function) - like lapply, with defined output.
+ safer to use than sapply as we specifiy the output type.
+ example where output will be vector of size 3:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+basics <- function(x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  c(min = min(x), mean = mean(x), max = max(x))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+vapply(temp, basics, FUN.VALUE = numeric(3))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+anonymous function - a function doesn't have to have a name, and can be
+ defind as you go:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+# Named function
+\end_layout
+
+\begin_layout Plain Layout
+
+triple <- function(x) { 3 * x }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Anonymous function with same implementation
+\end_layout
+
+\begin_layout Plain Layout
+
+function(x) { 3 * x }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Use anonymous function inside lapply()
+\end_layout
+
+\begin_layout Plain Layout
+
+lapply(list(1,2,3), function(x) { 3 * x })
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+seq(n1, n2, by=step) - creates a sequence from n1 to n2, with stepsize defined
+ in by.
+ all elements can be negative.
+ if n2<n1, sequence will be decreasing.
+ 
+\end_layout
+
+\begin_layout Itemize
+rep(v, times=n1, each =n2) - replicates elementrs in v.
+ if time - then replicates the vector n1 times, by binding from end.
+ if each - replicates each element n2 times in it's place.
+ example:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+v = c(8,6,4,2)
+\end_layout
+
+\begin_layout Plain Layout
+
+rep(v, times=2)
+\end_layout
+
+\begin_layout Plain Layout
+
+[1] 8 6 4 2 8 6 4 2
+\end_layout
+
+\begin_layout Plain Layout
+
+rep(v, each=2)
+\end_layout
+
+\begin_layout Plain Layout
+
+[1] 8 8 6 6 4 4 2 2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+sort(v, decreasing = TRUE/FALSE) - sorts v by decreasing or asscending order
+ of size.
+ 
+\end_layout
+
+\begin_layout Itemize
+is.*(v) - returns TRUE or FALSE if v is of type *.
+ * can be list, vector, etc.
+ 
+\end_layout
+
+\begin_layout Itemize
+as.*(v) - converts v into type *.
+ 
+\end_layout
+
+\begin_layout Itemize
+rev(v) - reverses order of elements in v.
+\end_layout
+
+\begin_layout Itemize
+append(v1, v2) - append v2 to v1.
+ 
+\end_layout
+
+\begin_layout Itemize
+grepl(pattern = <regex>, x = <string>) - returns logical values for which
+ elements in x match pattern.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Some good regular expressions to remember:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+^a
+\begin_inset Quotes erd
+\end_inset
+
+ - matches all strings that start with a
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+a$
+\begin_inset Quotes erd
+\end_inset
+
+ - matches all strings that end with a
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ any character
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+?
+\begin_inset Quotes erd
+\end_inset
+
+ one time
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+??
+\begin_inset Quotes erd
+\end_inset
+
+ two times
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+*
+\begin_inset Quotes erd
+\end_inset
+
+ zero or more times
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+
+\backslash
+
+\backslash
+
+\begin_inset Quotes erd
+\end_inset
+
+ escape - for example, 
+\begin_inset Quotes eld
+\end_inset
+
+
+\backslash
+
+\backslash
+.
+\begin_inset Quotes erd
+\end_inset
+
+ means we want to match on 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ and not on the wildcard 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ .
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+
+\backslash
+
+\backslash
+s
+\begin_inset Quotes erd
+\end_inset
+
+ - space
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+[0-9]+
+\begin_inset Quotes erd
+\end_inset
+
+ - match the numbers 0 to 9, at least once (+)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+([0-9]+)
+\begin_inset Quotes erd
+\end_inset
+
+ - The parentheses are used to make parts of the matching string available
+ to define the replacement.
+ usually comes with //1 and //2.
+ //1 means 
+\begin_inset Quotes eld
+\end_inset
+
+the first expression in paratheses
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+//2
+\begin_inset Quotes erd
+\end_inset
+
+ the second, etc.
+ 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+grep(pattern = <regex>, x = <string>) - returns the index numbers for which
+ elements in x match pattern.
+ 
+\end_layout
+
+\begin_layout Itemize
+sub(pattern = <regex>, replacement = <str>, x = <str>) - replaces pattern
+ with str in x, if there is more than one match in a string, only the first
+ instance is replaced.
+ 
+\end_layout
+
+\begin_layout Itemize
+gsub(pattern = <regex>, replacement = <str>, x = <str>) - like sub, but
+ replaces all instances of pattern.
+ 
+\end_layout
+
+\begin_layout Itemize
+Sys.Date() - get current date in date(Y-M-D) format.
+ 
+\end_layout
+
+\begin_layout Itemize
+Sys.time() - get current date & hour in date+hour (Y-M-D HH:MM:SS) format.
+\end_layout
+
+\begin_layout Itemize
+as.Date(string, format= 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+) - turns string into a date variable with matching format.
+\end_layout
+
+\begin_layout Itemize
+as.POSIXct(string, format=
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+) - turns string to POSIXct format (Y-M-D HH:MM:SS)
+\end_layout
+
+\begin_layout Itemize
+format(time, 
+\begin_inset Quotes eld
+\end_inset
+
+%fmt
+\begin_inset Quotes erd
+\end_inset
+
+) - returns the %fmt element from time.
+ for example: format(Sys.Date(),
+\begin_inset Quotes erd
+\end_inset
+
+%B
+\begin_inset Quotes erd
+\end_inset
+
+) - returns 
+\begin_inset Quotes eld
+\end_inset
+
+March
+\begin_inset Quotes erd
+\end_inset
+
+ (written in 16.3.2019).
+ 
+\end_layout
+
+\begin_layout Itemize
+Important time formats in R:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+%Y: 4-digit year (1982)
+\end_layout
+
+\begin_layout Itemize
+%y: 2-digit year (82)
+\end_layout
+
+\begin_layout Itemize
+%m: 2-digit month (01)
+\end_layout
+
+\begin_layout Itemize
+%d: 2-digit day of the month (13)
+\end_layout
+
+\begin_layout Itemize
+%A: weekday (Wednesday)
+\end_layout
+
+\begin_layout Itemize
+%a: abbreviated weekday (Wed)
+\end_layout
+
+\begin_layout Itemize
+%B: month (January)
+\end_layout
+
+\begin_layout Itemize
+%b: abbreviated month (Jan)
+\end_layout
+
+\begin_layout Itemize
+%H: hours as a decimal number (00-23)
+\end_layout
+
+\begin_layout Itemize
+%I: hours as a decimal number (01-12)
+\end_layout
+
+\begin_layout Itemize
+%M: minutes as a decimal number
+\end_layout
+
+\begin_layout Itemize
+%S: seconds as a decimal number
+\end_layout
+
+\begin_layout Itemize
+%T: shorthand notation for the typical format %H:%M:%S
+\end_layout
+
+\begin_layout Itemize
+%p: AM/PM indicator
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+dplyr:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+%>% - pipe operator, takes whatever is before it and feeds it into the next
+ step.
+ example: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+dataframe %>%
+\end_layout
+
+\begin_layout Plain Layout
+
+	filter(year==2007) %>%
+\end_layout
+
+\begin_layout Plain Layout
+
+		summarize(mean(GDP))
+\end_layout
+
+\end_inset
+
+a good way to think about the pipe operator is 
+\begin_inset Quotes eld
+\end_inset
+
+then
+\begin_inset Quotes erd
+\end_inset
+
+.
+ in the above example we say to R 
+\begin_inset Quotes eld
+\end_inset
+
+go to dataframe THEN filter for observations where year is 2007 THEN show
+ me the mean of GDP
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+Helper functions, similar to wildcards in Stata for variable names: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Stata		dplyr
+\end_layout
+
+\begin_layout Plain Layout
+
+keep v*	  select(df, starts_with("v"))
+\end_layout
+
+\begin_layout Plain Layout
+
+keep *v	  select(df, ends_with("v"))
+\end_layout
+
+\begin_layout Plain Layout
+
+keep *v*	 select(df, contains("v"))
+\end_layout
+
+\begin_layout Plain Layout
+
+keep v?	  select(df, matches("^v.$"))
+\end_layout
+
+\begin_layout Plain Layout
+
+keep *	   select(df, everything())
+\end_layout
+
+\begin_layout Plain Layout
+
+drop v1	  select(df, -v1)
+\end_layout
+
+\begin_layout Plain Layout
+
+keep id-v2   select(df, id:v2)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+rename(data, new_name = old_name) - renames old_name to new_name in data.
+ 
+\end_layout
+
+\begin_layout Itemize
+filter() - subset selection on rows.
+ filter can get several boolean operations at once and also a boolean operation
+ with approriate and/or.
+ the following two calls are equivilant:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+filter(df, a > 0 & b > 0)
+\end_layout
+
+\begin_layout Plain Layout
+
+filter(df, a > 0, b > 0)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+select() - subset seletion on variables.
+ syntax: select(dataframe, var1, var2) to select vars var1 and var2.
+ we can use : to select a range of variables and - to exclude some variables.
+ example:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+select(dataframe,1:4,-2)
+\end_layout
+
+\end_inset
+
+note that : does not require the variable number, we can also use it with
+ variable names:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+select(dataframe,x1:x4,-x3)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+arrange() - asscending sorts a table based on a variable.
+ for descending sort, command is 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+arrange(desc(field))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+mutate() - changes or adds variables.
+ example:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+gapminder %>%
+\end_layout
+
+\begin_layout Plain Layout
+
+	mutate(pop = pop/1e6)
+\end_layout
+
+\end_inset
+
+mutate can create several variables in one call.
+ example:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+mutate(my_df, x = a + b, y = x + c) 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+summarize() - turns many rows into one.
+ example: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+gapminder %>%
+\end_layout
+
+\begin_layout Plain Layout
+
+	summarize(meanLifeExp = mean(lifeExp))
+\end_layout
+
+\end_inset
+
+summarize() works with any aggregate function (a function that returns a
+ single output for a vector of input) - whether built in or user defined.
+ dplyr has several aggregate functions of it's own:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+first(x) - The first element of vector x.
+\end_layout
+
+\begin_layout Itemize
+last(x) - The last element of vector x.
+\end_layout
+
+\begin_layout Itemize
+nth(x, n) - The nth element of vector x.
+\end_layout
+
+\begin_layout Itemize
+n() - The number of rows in the data.frame or group of observations that
+ summarize() describes.
+\end_layout
+
+\begin_layout Itemize
+n_distinct(x) - The number of unique values in vector x.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+group_by() - before summarize() turns groups into one row each.
+ example: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+gapminder %>%
+\end_layout
+
+\begin_layout Plain Layout
+
+	group_by(year) %>%
+\end_layout
+
+\begin_layout Plain Layout
+
+		summarize(meanLifeExp = mean(lifeExp))
+\end_layout
+
+\end_inset
+
+This returns the mean life expectancy for each year in the gapminder dataset.
+\end_layout
+
+\begin_layout Itemize
+do() - works with functions that return dataframes.
+ For instance, to create a dataset of regression coefficients estimated
+ within each group:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+df %>% group_by(id, v1) %>% do(tidy(lm(v2 ~ v1, .)))
+\end_layout
+
+\begin_layout Plain Layout
+
+#>      id        term  estimate std.error  statistic      p.value
+\end_layout
+
+\begin_layout Plain Layout
+
+#> 1: id02 (Intercept) 83.700643 10.047882  8.3301777 4.605927e-09
+\end_layout
+
+\begin_layout Plain Layout
+
+#> 2: id02          v1 -9.516896  3.446395 -2.7614060 1.004458e-02
+\end_layout
+
+\begin_layout Plain Layout
+
+#> 3: id01 (Intercept) 66.394417 14.672724  4.5250232 8.337954e-05
+\end_layout
+
+\begin_layout Plain Layout
+
+#> 4: id01          v1 -7.037230  4.098241 -1.7171341 9.593145e-02
+\end_layout
+
+\begin_layout Plain Layout
+
+#> 5: id03 (Intercept) 49.510889 10.494152  4.7179505 3.749716e-05
+\end_layout
+
+\begin_layout Plain Layout
+
+#> 6: id03          v1 -1.200503  3.318542 -0.3617561 7.197092e-01
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+distinct() - distnict values taken by varaible.
+ use nrow(distinct()) for the number of distinct (unique) values.
+ 
+\end_layout
+
+\begin_layout Itemize
+Merging datasets: Note: if the key variable is named differently (country
+ and country_name for example), the by argument should contain a vector:
+ 
+\begin_inset Formula $\text{by=c("country"="country\_name")}$
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+left_join(data1, data2, by=
+\begin_inset Quotes erd
+\end_inset
+
+key_var
+\begin_inset Quotes erd
+\end_inset
+
+) - a 1:1 or 1:m match on key_var.
+ if more than one key, than by=c(
+\begin_inset Quotes eld
+\end_inset
+
+key_var1
+\begin_inset Quotes erd
+\end_inset
+
+,
+\begin_inset Quotes erd
+\end_inset
+
+key_var2
+\begin_inset Quotes erd
+\end_inset
+
+).
+ left_join() returns all rows from data1 and merged ones from data2.
+\end_layout
+
+\begin_layout Itemize
+right_join(data1, data2, by=
+\begin_inset Quotes erd
+\end_inset
+
+key_var
+\begin_inset Quotes erd
+\end_inset
+
+) - the same as left_join(), where all rows are from data2 and those matched
+ from data1.
+ 
+\end_layout
+
+\begin_layout Itemize
+inner_join(data1, data2, by=
+\begin_inset Quotes erd
+\end_inset
+
+key_var
+\begin_inset Quotes erd
+\end_inset
+
+) - only returns rows that are matched from both datasets.
+ 
+\end_layout
+
+\begin_layout Itemize
+full_join(data1, data2, by=
+\begin_inset Quotes erd
+\end_inset
+
+key_var
+\begin_inset Quotes erd
+\end_inset
+
+) - returns all rows, those that match and those that don't.
+\end_layout
+
+\begin_layout Itemize
+\noindent
+\align block
+A graphical example:
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename Joins png.PNG
+	lyxscale 20
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+filter joins : these merges return a dataset which is filtered according
+ to match.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+semi_join(data1, data2, by=
+\begin_inset Quotes erd
+\end_inset
+
+name
+\begin_inset Quotes erd
+\end_inset
+
+) - will return data1 (and just the variables in data1) and just the rows
+ that have a match in data2.
+ For example, say data1 has countries and various economic data on them.
+ data2 is a list of countries in the OECD and the year they joined in.
+ semi_join() will result in data1 just for the OECD countries.
+ this is identical to Stata's: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+use countries_data
+\end_layout
+
+\begin_layout Plain Layout
+
+merge m:1 country_name using countries_OECD
+\end_layout
+
+\begin_layout Plain Layout
+
+keep if _merge == 3
+\end_layout
+
+\begin_layout Plain Layout
+
+drop OECD_member year_joined /* variables from countries_OECCD */
+\end_layout
+
+\end_inset
+
+The advantage of semi_join() is that it doesn't add un-needed variables
+ to the original dataset, keeping things efficent.
+ semi_join() my also be used as a complex filter.
+ instead of filter() with many arguments, we can match with another dataset.
+ This is similar to 
+\begin_inset Quotes eld
+\end_inset
+
+advnaced filter
+\begin_inset Quotes erd
+\end_inset
+
+ in Excel where you select a column label and a condition.
+\end_layout
+
+\begin_layout Itemize
+anti_join(data1, data2, by=
+\begin_inset Quotes erd
+\end_inset
+
+name
+\begin_inset Quotes erd
+\end_inset
+
+) - the opposite of semi_join().
+ will return data1 just for rows that have no match in data2.
+ One usage example of anti_join() is to find where no match occurs even
+ when one should occur.
+ this can be due to key being spelled differerntly for example.
+ 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+Appending datasets - when datasets contain the same variables and we wish
+ to append them:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+union(data1, data2) - will return all the rows that appear in one or more
+ of the datasets.
+ if a row is identical in both datasets, union will return just one copy
+ of it.
+ 
+\end_layout
+
+\begin_layout Itemize
+intersect(data1, data2) - will return only the rows that appear in both
+ datasets.
+\end_layout
+
+\begin_layout Itemize
+setdiff(data1, data2) - will return only the rows that appear in data1 but
+ not in data2.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+What if we want to find which observations appear just in one dataset? we
+ can achieve this by union() - creating a dataset containing all observations,
+ then using intersect() to find observations that appear in both.
+ then using set_diff() between these two to find just observations which
+ appear in one dataset.
+ 
+\end_layout
+
+\begin_layout Itemize
+Note that union() removes duplicates.
+ thus if we have duplicates in data1, and we union() it with data2, the
+ resulting dataset may have less observations than data due to duplicates
+ removal.
+\end_layout
+
+\begin_layout Itemize
+Note that if the datasets contain the same variables, setdiff() and anti_join()
+ with all variables as key - are equivalent.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+bind_rows(data1, data2, .id=) - row binding, similar to rbind() in base R.
+ bind_rows() is faster, can take list of dataframes as input and always
+ returns tibbles.
+ .id=var creates a new variable named var to contain the name of each list.
+\end_layout
+
+\begin_layout Itemize
+bind_cols(data1, data2, .id=) - col binding.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Building dataframes:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+data_frame(v1, v2, v3, c4=v4) - create a dataframe with variables v1 v2
+ v3 and each vector's contents as the observations.
+ it also creates a variable named c4 to contain the contents of v4.
+ This is simmilar to data.frame() in base R, but has several advantages:
+ it will not change the type of vector (e.g.
+ from strings to factors), add row names, change column names, recycle vectors
+ greater than length one.
+ In short, it enforces good dataframe building practices, preventing later
+ mistakes.
+ 
+\end_layout
+
+\begin_layout Itemize
+as_data_frame(x) - turns x into a dataframe.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Comparing datasets:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+setequal(data1, data2) - returns TRUE if data1 is equal to data2 in terms
+ of contents and variables.
+ the sorting order doesn't matter.
+ Base R has the identical() function which is similar, yet it is less robust
+ and will return FALSE if the datasets are identical except for sorting
+ order.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+tibble or tbl - a special kind of data.frame.
+ They make your data easier to look at, but also easier to work with.
+ You can do anything with dataframes as you do with tibbles.
+\end_layout
+
+\begin_layout Itemize
+as_tibble() - transforms a dataframe to a tibble.
+ 
+\end_layout
+
+\begin_layout Itemize
+lookup table: assume you have a vairable with various country names and
+ you want the gdp of these countries.
+ these can be done by creating a lookuptable (
+\emph on
+lut
+\emph default
+) and subsetting it for the values in that variable.
+ example:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+lut <- c("Israel","Germany","Pakistan")
+\end_layout
+
+\begin_layout Plain Layout
+
+lut[gapminder_data$country]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+variable lists: dplyr has several helper functions to select a group of
+ variables inside a select() call.
+ this is similar to variable namelist in Stata:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+starts_with("X"): every name that starts with "X",
+\end_layout
+
+\begin_layout Itemize
+ends_with("X"): every name that ends with "X",
+\end_layout
+
+\begin_layout Itemize
+contains("X"): every name that contains "X",
+\end_layout
+
+\begin_layout Itemize
+matches("X"): every name that matches "X", where "X" can be a regular expression
+,
+\end_layout
+
+\begin_layout Itemize
+num_range("x", 1:5): the variables named x01, x02, x03, x04 and x05,
+\end_layout
+
+\begin_layout Itemize
+one_of(x): every name that appears in x, which should be a character vector.
+\end_layout
+
+\begin_layout Itemize
+rank(x): the rank of each element in x.
+ for descending rank uses rank(desc(x))
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+We can use dplyr to access subsets of large datasets that cannot be loaded
+ completely into R.
+ The following example is to connect to a SQL database:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+# Set up a connection to the mysql database
+\end_layout
+
+\begin_layout Plain Layout
+
+my_db <- src_mysql(dbname = "dplyr", 
+\end_layout
+
+\begin_layout Plain Layout
+
+                   host = "courses.csrrinzqubik.us-east-1.rds.amazonaws.com",
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+                   port = 3306, 
+\end_layout
+
+\begin_layout Plain Layout
+
+                   user = "student",
+\end_layout
+
+\begin_layout Plain Layout
+
+                   password = "datacamp")
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Reference a table within that source: nycflights
+\end_layout
+
+\begin_layout Plain Layout
+
+nycflights <- tbl(my_db, "dplyr")
+\end_layout
+
+\end_inset
+
+Here, nycflights is a pointer for dplyr to use.
+ In the background, dplyr translate dplyr commands to SQL commands and will
+ retrieve the portions of data needed for calculations.
+ 
+\end_layout
+
+\begin_layout Itemize
+rownames_to_column(data, var = 
+\begin_inset Quotes eld
+\end_inset
+
+newvar
+\begin_inset Quotes erd
+\end_inset
+
+) - sometimes, key information is stored in row.names of a matrix or vector.
+ this function returns a copy of data with the row names in a new column
+ named newvar.
+ 
+\end_layout
+
+\begin_layout Itemize
+http://www.matthieugomez.com/statar/macros.html
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+ggplot2:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+A graph in ggplot is composed of 3 distinct parts: 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Aesthetics that maps variables (columns) to axis or colors
+\end_layout
+
+\begin_layout Itemize
+stats that transform the data
+\end_layout
+
+\begin_layout Itemize
+geoms that plot an aesthetic
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+General syntax: ggplot(data, aes(x= ,y=, color=, size=)) + geom_point()
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+data is the dataframe to plot.
+ aesthetics is what we want to plot, the dimensions of the plot or the axis.
+ color makes the points in a color defined by the factor variable after
+ the assignment operator.
+ size makes each point the size defined by the variable.
+ geom_point is the type of plot we want.
+ for scatter, it's a point.
+\end_layout
+
+\begin_layout Itemize
+To set a property of a geom to a single value, pass it as an argument.
+ To give the property different values for each row of data, pass it as
+ an aesthetic.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Conveinent option: scale_x_log10()
+\end_layout
+
+\begin_layout Itemize
+A list of ggplot geoms:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+37 Geometries: abline, area, bar, bin2d, blank, boxplot, contour, crossbar,
+ density, density2d, dotplot, errorbar, errobarh, freqpoly, hex, histogram,
+ hline, jitter, line, linerange, map, path, point, pointrange, polygon,
+ quantile, raster, rect, ribbon, rug, segment, smooth, step, text, tile,
+ violin, vline
+\end_layout
+
+\begin_layout Itemize
+Each geom has specific asthetic mappings.
+ For example, for geom_point(), x and y are essential.
+ alpha, color, fill, shape and size are optional.
+ 
+\end_layout
+
+\begin_layout Itemize
+Astehtic mappings can be placed inside geoms().
+ This allows to indenedpntly control each geom layer.
+ If there's only 1 geom layer, setting asthetics in the main ggplot() call
+ and setting it inside the geom layer are identical.
+ 
+\end_layout
+
+\begin_layout Itemize
+A geom layer can also have it's own data.
+ This is useful for example to plot the observations, and use a data of
+ summary stats to plot means, median etc as well.
+ example: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+geom_point(data=data_summary)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+geom_point() for scatter.
+ setting alpha = 0.4 inside, will make the points 40% visible (or 60% transparent
+).
+\end_layout
+
+\begin_layout Itemize
+geom_line() for line plots
+\end_layout
+
+\begin_layout Itemize
+geom_col() for bar plots
+\end_layout
+
+\begin_layout Itemize
+geom_histogram() for histograms.helpful option: 
+\emph on
+binwidth
+\emph default
+ to set the width of the histograms bins.
+ in histograms there's only one aesthetic - the x axis.
+ If we want density instead of count, we specifiy y=..density..
+ inside the geom_histogram asthetics.
+ Another important aspect of the histogram geom is position.
+ it can take stack for stacking bars on top of each other - count (this
+ is the default).
+ fill to place the bars on top of each other - proportions.
+ dodge - places the bars next to each other.
+ counts are used.
+ 
+\end_layout
+
+\begin_layout Itemize
+geom_boxplot() for boxplots.
+ has 2 asthetics: x is a catagorical variable and y is the variable for
+ which we examine the distrbution.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Boxplot interpertation: black line is median, bottom and top are 25th and
+ 75th percentile.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+geom_smooth(method = 
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Quotes erd
+\end_inset
+
+) for smoothed conditional means (e.g.
+ linear fit).
+ Methods include but are not limited to: auto, lm,glm, gam, loess.
+ can also have user specified function (i think).
+ 
+\end_layout
+
+\begin_layout Itemize
+in R, shape has value 1-25.
+ shapes 1-20 only accept 
+\emph on
+color
+\emph default
+ asthetic, shapes 21-25 can have both 
+\emph on
+color
+\emph default
+ and 
+\emph on
+fill
+\emph default
+ asthetics.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+facet_wrap(~ var) - create different plot for each unique value of var.
+ the ~ opeartor means 
+\begin_inset Quotes eld
+\end_inset
+
+by
+\begin_inset Quotes erd
+\end_inset
+
+.
+ this is added to a ggplot with +.
+ example:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+ggplot(data,aes(x=pop,y=gdp)) + geom_point() + facet_wrap(~ continent)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+expand_limits(y = 0) - expands the graph to start from 0.
+ 
+\end_layout
+
+\begin_layout Itemize
+Example of utilizing several dimensions to graph:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+ggplot(data,aes(x=pop,y=gdp)) + geom_point() + facet_wrap(~ continent)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+geom_point() has a sahpe argument that takes an inter in [0,25].
+ if we want to manually set it, we need to add scale_shape_identity() like
+ so:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+ggplot(data,aes(x=pop,y=gdp)) + geom_point(aes(shape=11)) + scale_shape_identity
+()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Asthetics:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x, y, color, fill, shape, linetype
+\end_layout
+
+\begin_layout Itemize
+each asthetic also has scale functions such as scale_y, scale_color_discrete,
+ etc.
+ 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+tidyr:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Reshaping datasets: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+From wide to long
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Stata	reshape long stub, i(i) j(variable) string
+\end_layout
+
+\begin_layout Plain Layout
+
+tidyr	gather(dfwide, variable, value, starts_with("stub"))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+From long to wide
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Stata	reshape long stub, i(id) j(variable) string  
+\end_layout
+
+\begin_layout Plain Layout
+
+		 rename stub value 
+\end_layout
+
+\begin_layout Plain Layout
+
+tidyr	gather(dfwide, variable, value, starts_with("stub"))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Simmilar to dplyr.
+ Have yet to understand the fundamdental differences.
+\end_layout
+
+\begin_layout Itemize
+gather() - rearranges the data frame by specifying the columns that are
+ categorical variables with a - notation.
+ Complete the command.
+ 
+\end_layout
+
+\begin_layout Itemize
+seperate() - rearranges the data frame by specifying the columns that are
+ categorical variables with a - notation.
+ Complete the command.
+ 
+\end_layout
+
+\begin_layout Itemize
+spread() - 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+purrr:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Easy iteration.
+ 
+\end_layout
+
+\begin_layout Itemize
+General syntax: map(list, function).
+ example: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+#looping without purrr:
+\end_layout
+
+\begin_layout Plain Layout
+
+files <- list.files(pattern="*.csv")
+\end_layout
+
+\begin_layout Plain Layout
+
+all_files <- list()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# For loop to read files into a list
+\end_layout
+
+\begin_layout Plain Layout
+
+for(i in seq_along(files)){
+\end_layout
+
+\begin_layout Plain Layout
+
+  all_files[[i]] <- read_csv(file = files[[i]])
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#With purrr:
+\end_layout
+
+\begin_layout Plain Layout
+
+# Use map to iterate
+\end_layout
+
+\begin_layout Plain Layout
+
+all_files_purrr <- map(files, read_csv) 
+\end_layout
+
+\end_inset
+
+map() returns a list.
+ map_dbl() returns a vector of numbers.
+ map_lgl returns a vector of logicals.
+ map_chr() returns a vector of strings, map_df() returns a dataframe.
+ 
+\end_layout
+
+\begin_layout Itemize
+map(list, ~function(.x)) - This second way gives the same result as map(list,
+ function).
+ To specify how the list is used in the function, use the argument .x to
+ denote where the list element goes inside the function.
+ When you want to use .x to show where the element goes in the function,
+ you need to put a ~ in front of the function in the second argument of
+ map().
+\end_layout
+
+\begin_layout Itemize
+Example - setting names to list elements: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+# Set names so each element of the list is named for the film title
+\end_layout
+
+\begin_layout Plain Layout
+
+sw_films_named <- sw_films %>% 
+\end_layout
+
+\begin_layout Plain Layout
+
+  set_names(map_chr(sw_films, "title"))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Lists vs.
+ dataframes
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Subsetting dataframes: 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+mtcars[1,
+\begin_inset Quotes erd
+\end_inset
+
+wt
+\begin_inset Quotes erd
+\end_inset
+
+] - returns the first row of column wt
+\end_layout
+
+\begin_layout Itemize
+mtcars$wt - returns all rows of column/variable wt
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Subsetting lists:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+list[[2]] - returns the second element in list
+\end_layout
+
+\begin_layout Itemize
+list[[
+\begin_inset Quotes eld
+\end_inset
+
+model
+\begin_inset Quotes erd
+\end_inset
+
+]] - returns the element named 
+\begin_inset Quotes eld
+\end_inset
+
+model
+\begin_inset Quotes erd
+\end_inset
+
+ in list
+\end_layout
+
+\begin_layout Itemize
+list$model - returns the eleemnt named 
+\begin_inset Quotes eld
+\end_inset
+
+model
+\begin_inset Quotes erd
+\end_inset
+
+ in list
+\end_layout
+
+\begin_layout Itemize
+list$element[vectornumber] - subsetting the elemnt inside list itself.
+ 
+\end_layout
+
+\begin_layout Itemize
+list$element$col - if element is a dataframe, we can access variable col
+ within it as such.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+Estimations and regressions:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+package 
+\emph on
+lfe
+\emph default
+ implements models with high dimensional fixed effects or/and instrumental
+ variables
+\end_layout
+
+\begin_layout Itemize
+transofrmations can be defined in the model - lm(log(y) ~ log(x)).
+\end_layout
+
+\begin_layout Itemize
+factor varaiables need to be defined as such, or run in the model: lm(y
+ ~ as.facotr(age_group)).
+ 
+\end_layout
+
+\begin_layout Itemize
+interactions: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Stata:				R:
+\end_layout
+
+\begin_layout Plain Layout
+
+reg y c.x1#c.x2	   lm(y ~ x1:x2)
+\end_layout
+
+\begin_layout Plain Layout
+
+reg y c.x1##c.x2	  lm(y ~ x1*x2)
+\end_layout
+
+\begin_layout Plain Layout
+
+reg y c.x1##i.x2	  lm(y ~ x1*as.factor(x2))	 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Fixed effects linear models (package 
+\emph on
+lfe
+\emph default
+):
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Stata	areg y x1 [w=x3], a(id1) cl(id1)
+\end_layout
+
+\begin_layout Plain Layout
+
+lfe	  felm(y ~ x1 | id1 | 0 | id1, df, weight = x3))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Stata	reghdfe y x3 (x2 = x1), a(id1) cl(id1 id2)
+\end_layout
+
+\begin_layout Plain Layout
+
+lfe	  felm(y ~ x3 | id1 | (x2 ~ x1) | id1 + id2, df)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Stata	reghdfe y x2, a(c.x3#i.id1 id1) cl(id1 id2)
+\end_layout
+
+\begin_layout Plain Layout
+
+lfe	  felm(y ~ x2 | x3:id1 + id1, df)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+The package 
+\emph on
+gmm
+\emph default
+ implements GMM
+\end_layout
+
+\begin_layout Itemize
+The package 
+\emph on
+rdd
+\emph default
+ implements regression discontinuity models.
+\end_layout
+
+\begin_layout Itemize
+The package 
+\emph on
+matchit
+\emph default
+ implements matching procedures.
+\end_layout
+
+\begin_layout Itemize
+Post-Estimation: 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+An estimation function returns a list that contains the estimates, the covarianc
+e matrix, and in a lot of cases, the residuals, the predicted values, or
+ the original variables used in the estimation.
+ Apply the names function to examine the result: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+result <- felm(y ~ x2, df)
+\end_layout
+
+\begin_layout Plain Layout
+
+names(result)
+\end_layout
+
+\begin_layout Plain Layout
+
+#>  [1] "coefficients"  "badconv"       "Pp"            "N"            
+ "p"            
+\end_layout
+
+\begin_layout Plain Layout
+
+#>  [6] "inv"           "beta"          "response"      "fitted.values" "residual
+s"    
+\end_layout
+
+\begin_layout Plain Layout
+
+#> [11] "r.residuals"   "terms"         "cfactor"       "numrefs"       "df"
+           
+\end_layout
+
+\begin_layout Plain Layout
+
+#> [16] "df.residual"   "rank"          "exactDOF"      "vcv" 
+\end_layout
+
+\begin_layout Plain Layout
+
+         "robustvcv"    
+\end_layout
+
+\begin_layout Plain Layout
+
+#> [21] "clustervcv"    "cse"           "ctval"         "cpval"        
+ "clustervar"   
+\end_layout
+
+\begin_layout Plain Layout
+
+#> [26] "se"            "tval"          "pval"          "rse"          
+ "rtval"        
+\end_layout
+
+\begin_layout Plain Layout
+
+#> [31] "rpval"         "xp"            "call"   
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Applyting summary() to model object prints a table similar to stata output.
+\end_layout
+
+\begin_layout Itemize
+Package 
+\emph on
+stargazer 
+\emph default
+allows combination of several models in one table, and output to latex,
+ html, text and various other formats.
+ 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+pryr - Useful tools to pry back the covers of R and understand the language
+ at a deeper level.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+mem_used() - How much memory is currently used by R?
+\end_layout
+
+\begin_layout Itemize
+object_size(df) - Compute the size of an object.
+ 
+\end_layout
+
+\end_deeper
+\end_body
+\end_document
