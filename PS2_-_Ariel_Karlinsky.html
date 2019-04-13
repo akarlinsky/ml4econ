@@ -203,10 +203,11 @@ $(document).ready(function () {
 <p>This <em>R Markdown</em> document contains both code and text problem set 2 in HUJI course 57750.</p>
 <div id="part-1" class="section level1">
 <h1>Part 1</h1>
-<p>We begin by importing the <em>glmnet</em> and <em>ISLR</em> librariers. We additionally include some useful libraries <em>TidyVerse</em> for data manipulation and plotting, and load the <em>Credit</em> Dataset into <em>Dat</em> tibble.</p>
+<p>We begin by importing the <em>glmnet</em> and <em>ISLR</em> librariers. We additionally include some useful libraries <em>TidyVerse</em> for data manipulation and plotting, and the <em>broom</em> package for tidying up the <em>glmnet</em> output (as shown <a href="http://varianceexplained.org/broom-gallery/snippets/broom-glmnet.html">here</a>) and load the <em>Credit</em> Dataset into <em>Dat</em> tibble.</p>
 <pre class="r"><code>library(glmnet)
 library(ISLR)
 library(tidyverse)
+library(broom)
 
 Dat &lt;- as_tibble(Credit)</code></pre>
 <div id="q2" class="section level2">
@@ -237,17 +238,170 @@ Dat &lt;- as_tibble(Credit)</code></pre>
 </div>
 <div id="q3" class="section level2">
 <h2>Q3</h2>
-<p>As we will only use quantative variables, we create a new trimmed down version of the dataset without the following variables: ID, Gender, Student, Married, Ethnicity. We then load this trimmed down version for <em>glmnet</em> with <em>model.matrix()</em>:</p>
+<p>As we will only use quantative variables, we create a new trimmed down version of the dataset without the following variables: ID, Gender, Student, Married, Ethnicity. We then load this trimmed down version for <em>glmnet</em> with <em>model.matrix()</em> (we remove the intercept using <em>-1</em> in the <em>model.matrix()</em> formula:</p>
 <pre class="r"><code>Dat2 &lt;- Dat %&gt;% 
   select(-c(ID,Gender,Student,Married,Ethnicity))
-model_matrix &lt;- model.matrix(object = Income ~., data = Dat2)</code></pre>
+model_matrix &lt;- model.matrix(object = Income ~. - 1, data = Dat2)</code></pre>
 </div>
 <div id="q4" class="section level2">
 <h2>Q4</h2>
 <p>All the models we estimate have the following form, they minimize the following problem, as seen <a href="https://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html">here</a> and in the “Dimensioality Reduction slides”</p>
 <p><span class="math display">\[ \min_{\beta} \frac{1}{N} \sum_{i=1}^{N}(y_i-\beta^T x_i) + \lambda\left[(1-\alpha)||\beta||_2^2/2 + \alpha ||\beta||_1\right]
 \ \]</span></p>
-<p>The ridge model is given by <span class="math inline">\(\alpha=0\)</span> (as we are left with the L2 norm of <span class="math inline">\(\beta\)</span>), The lasso model by <span class="math inline">\(\alpha=1\)</span> and the elastic net model is a combination of the two and is thus given by <span class="math inline">\(\alpha \in (0,1)\)</span></p>
+<p>The ridge model is given by <span class="math inline">\(\alpha=0\)</span> (as we are left with the L2 norm of <span class="math inline">\(\beta\)</span>), The lasso model by <span class="math inline">\(\alpha=1\)</span> and the elastic net model is a combination of the two and is thus given by <span class="math inline">\(\alpha \in (0,1)\)</span>. $is a the regularization parameter that detrmines how much weight is given to the penalty. The models are estimated with the <em>glmnet</em> package, where we estimate 2 elastic-net models - one in which <span class="math inline">\(\alpha\)</span> is close to 0 and one in which it’s close to 1.</p>
+<p>Problem: Even though the model_matrix doesn’t have an intercept, the models all have intercept. If I exclude the intercept and set it to zero in the glmnet command, the only coefficent left is <em>Education</em>. This is shown below with <em>fit_lasso</em> having an intercept and <em>fit_lasso2</em> doesn’t have it:</p>
+<pre class="r"><code>fit_lasso &lt;- glmnet(y=Dat2$Income, x=model_matrix, alpha = 1)
+fit_lasso2 &lt;- glmnet(y=Dat2$Income, x=model_matrix, alpha = 1, intercept = FALSE)
+
+coef(fit_lasso)</code></pre>
+<pre><code>## 7 x 68 sparse Matrix of class &quot;dgCMatrix&quot;</code></pre>
+<pre><code>##    [[ suppressing 68 column names 's0', 's1', 's2' ... ]]</code></pre>
+<pre><code>##                                                                         
+## (Intercept) 45.21889 40.130745055 35.494621439 31.270358267 2.741674e+01
+## Limit        .        0.001074445  0.002053439  0.002945461 3.758239e-03
+## Rating       .        .            .            .           1.304817e-05
+## Cards        .        .            .            .           .           
+## Age          .        .            .            .           .           
+## Education    .        .            .            .           .           
+## Balance      .        .            .            .           .           
+##                                                                
+## (Intercept) 2.389354e+01 20.644559849 17.557378603 14.743828213
+## Limit       4.491620e-03  0.005088439  0.005398627  0.005680106
+## Rating      1.544817e-04  0.001345341  0.005904571  0.010075915
+## Cards       .             .            .            .          
+## Age         .             .            .            .          
+## Education   .             .            .            .          
+## Balance     .             .            .            .          
+##                                                                        
+## (Intercept) 12.17788043 9.843757427 7.713154789 5.774309341 4.007859384
+## Limit        0.00593226 0.006169146 0.006377922 0.006572719 0.006750494
+## Rating       0.01394093 0.017356504 0.020573739 0.023437223 0.026042111
+## Cards        .          .           .           .           .          
+## Age          .          .           .           .           .          
+## Education    .          .           .           .           .          
+## Balance      .          .           .           .           .          
+##                                                                         
+## (Intercept) 2.39645991 0.929607857 -0.407759931 -1.62663903 -2.734542038
+## Limit       0.00690902 0.007056033  0.007188463  0.00730854  0.007422912
+## Rating      0.02846698 0.030638207  0.032639200  0.03447118  0.036066611
+## Cards       .          .            .            .           .          
+## Age         .          .            .            .           .          
+## Education   .          .            .            .           .          
+## Balance     .          .            .            .           .          
+##                                                                
+## (Intercept) -3.746200844 -4.667120360 -6.756105500 -9.637685151
+## Limit        0.007523111  0.007616004  0.007775665  0.007992082
+## Rating       0.037579991  0.038935197  0.047528022  0.060978166
+## Cards        .            .            .            .          
+## Age          .            .            .            .          
+## Education    .            .            .            .          
+## Balance      .            .           -0.003301915 -0.008911904
+##                                                                    
+## (Intercept) -12.266451010 -14.659984558 -16.839119204 -18.958089073
+## Limit         0.008183353   0.008360799   0.008525767   0.008627467
+## Rating        0.073321239   0.084520816   0.094676716   0.104560985
+## Cards         .             .             .             .          
+## Age           .             .             .             0.002260534
+## Education     .             .             .             .          
+## Balance      -0.014023425  -0.018680901  -0.022924671  -0.026764559
+##                                                                   
+## (Intercept) -20.898989091 -22.692554586 -24.32627685 -25.813703983
+## Limit         0.008817029   0.008944949   0.00906247   0.009171757
+## Rating        0.112046700   0.119542341   0.12635776   0.132534982
+## Cards         .             .             .            .          
+## Age           0.005743305   0.008897102   0.01177095   0.014390017
+## Education     .             .             .            .          
+## Balance      -0.030240703  -0.033410379  -0.03629848  -0.038930040
+##                                                                    
+## (Intercept) -27.169822260 -28.407758425 -29.531745459 -30.559571080
+## Limit         0.009269756   0.009354692   0.009439639   0.009510022
+## Rating        0.138186865   0.143401328   0.148040390   0.152371488
+## Cards         .             .             .             .          
+## Age           0.016776039   0.018949069   0.020930831   0.022734888
+## Education     .             .             .             .          
+## Balance      -0.041327799  -0.043512493  -0.045503199  -0.047316968
+##                                                                   
+## (Intercept) -31.493314288 -32.346193199 -33.121899436 -33.82940105
+## Limit         0.009579424   0.009638691   0.009695359   0.00974564
+## Rating        0.156239572   0.159822936   0.163048382   0.16600733
+## Cards         .             .             .             .         
+## Age           0.024379923   0.025877887   0.027243424   0.02848736
+## Education     .             .             .             .         
+## Balance      -0.048969672  -0.050475503  -0.051847587  -0.05309775
+##                                                                    
+## (Intercept) -34.471558677 -35.058909477 -35.592993901 -36.080682600
+## Limit         0.009796152   0.009837916   0.009877933   0.009912365
+## Rating        0.168633549   0.171089709   0.173298159   0.175340447
+## Cards         .             .             .             .          
+## Age           0.029622011   0.030654865   0.031596749   0.032454582
+## Education     .             .             .             .          
+## Balance      -0.054236878  -0.055274752  -0.056220345  -0.057081876
+##                                                                   
+## (Intercept) -36.525523643 -36.928182327 -37.297540273 -37.63307636
+## Limit         0.009942715   0.009974879   0.009999904   0.01002382
+## Rating        0.177216088   0.178856255   0.180415693   0.18181730
+## Cards         .             .             .             .         
+## Age           0.033236325   0.033951407   0.034600664   0.03519501
+## Education     .             .             .             .         
+## Balance      -0.057866744  -0.058581389  -0.059232908  -0.05982576
+##                                                                
+## (Intercept) -37.93749239 -38.21631019 -38.47112794 -38.70018922
+## Limit         0.01004736   0.01006666   0.01008251   0.01009986
+## Rating        0.18306593   0.18423745   0.18532986   0.18627159
+## Cards         .            .            .            .         
+## Age           0.03573929   0.03623282   0.03668298   0.03710321
+## Education     .            .            .            .         
+## Balance      -0.06036522  -0.06085733  -0.06130543  -0.06171075
+##                                                                 
+## (Intercept) -38.90977942 -39.09594169 -39.364737184 -39.61838557
+## Limit         0.01011533   0.01013267   0.010134534   0.01013735
+## Rating        0.18713929   0.18786154   0.188800217   0.18959711
+## Cards         .            .            .             .         
+## Age           0.03748190   0.03784605   0.038103740   0.03837584
+## Education     .            .            0.005991261   0.01262016
+## Balance      -0.06208138  -0.06241324  -0.062736552  -0.06301896
+##                                                                
+## (Intercept) -39.84928982 -40.05890408 -40.25427708 -40.42325843
+## Limit         0.01014004   0.01014284   0.01014267   0.01014554
+## Rating        0.19032061   0.19097119   0.19162100   0.19212481
+## Cards         .            .            .            .         
+## Age           0.03862457   0.03885436   0.03904807   0.03926455
+## Education     0.01865872   0.02415556   0.02919454   0.03372577
+## Balance      -0.06327604  -0.06350930  -0.06372661  -0.06391209
+##                                                                
+## (Intercept) -40.58393438 -40.73279177 -40.84747171 -40.98679005
+## Limit         0.01014768   0.01014702   0.01015056   0.01015066
+## Rating        0.19262936   0.19313324   0.19342041   0.19392533
+## Cards         .            .            .            .         
+## Age           0.03942690   0.03956922   0.03980016   0.03983118
+## Education     0.03789720   0.04171627   0.04505976   0.04832879
+## Balance      -0.06409221  -0.06425790  -0.06437682  -0.06454233
+##                                                                  
+## (Intercept) -41.08530542 -41.18323294 -41.288974530 -41.387296634
+## Limit         0.01015105   0.01015342   0.010153075   0.010152144
+## Rating        0.19421234   0.19449979   0.194859402   0.195137247
+## Cards         .            .            0.001666577   0.007105758
+## Age           0.04001254   0.04012762   0.040171237   0.040250926
+## Education     0.05112812   0.05372804   0.056210267   0.058499398
+## Balance      -0.06464416  -0.06475318  -0.064870493  -0.064961254
+##                         
+## (Intercept) -41.47126219
+## Limit         0.01015287
+## Rating        0.19534009
+## Cards         0.01199745
+## Age           0.04034856
+## Education     0.06054819
+## Balance      -0.06503614</code></pre>
+<pre class="r"><code>coef(fit_lasso2)</code></pre>
+<pre><code>## 7 x 7 sparse Matrix of class &quot;dgCMatrix&quot;
+##             s0      s1        s2        s3       s4       s5      s6
+## (Intercept)  . .       .         .         .        .        .      
+## Limit        . .       .         .         .        .        .      
+## Rating       . .       .         .         .        .        .      
+## Cards        . .       .         .         .        .        .      
+## Age          . .       .         .         .        .        .      
+## Education    . 0.28199 0.5389288 0.7730419 0.986357 1.180722 1.35782
+## Balance      . .       .         .         .        .        .</code></pre>
 </div>
 </div>
 
