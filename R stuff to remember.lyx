@@ -143,6 +143,73 @@ Missing values in R are special values that represents epistemic uncertainty.
 \end_layout
 
 \begin_layout Itemize
+glob2rx(pattern) - Change wildcard aka globbing patterns into the corresponding
+ regular expressions.
+ A regular expression can be used, but might be hard to write and interpret.
+ A glob on the other hand follows very simple rules:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+* - matches any number of any characters including none 
+\end_layout
+
+\begin_layout Itemize
+? - matches any single character 
+\end_layout
+
+\begin_layout Itemize
+[abc] - matches one character given in the bracket 
+\end_layout
+
+\begin_layout Itemize
+[a-z] - matches one character from the (locale-dependent) range given in
+ the bracket 
+\end_layout
+
+\begin_layout Itemize
+Code example - say we want to match all variables starting with 
+\emph on
+c
+\emph default
+ that contain just 2 digits and with the suffix cpi in the CBS expenditure
+ survey.
+ This can then be used in the 
+\emph on
+dplyr
+\emph default
+ function select and matches require a regular expression.
+ so we convert the glob 
+\emph on
+c??_cpi 
+\emph default
+to a regular expression
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+glob2rx("c???_cpi")
+\end_layout
+
+\begin_layout Plain Layout
+
+names(select(all_goods, matches(glob2rx("c??_cpi"))))
+\end_layout
+
+\begin_layout Plain Layout
+
+"c37_cpi" "c38_cpi" "c39_cpi" "c30_cpi" "c32_cpi" "c33_cpi" "c34_cpi" "c31_cpi"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
 Enviorments:
 \end_layout
 
@@ -616,6 +683,43 @@ On a continous variable:
 \end_deeper
 \begin_layout Itemize
 data.frame(v1,v2,..vn) - creates a dataframe from vectors v1 to vn.
+\end_layout
+
+\begin_layout Itemize
+How to loop through variables in R (not recomended!!): 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+vars <- c("data$var1", "data$var2", "data$var3")
+\end_layout
+
+\begin_layout Plain Layout
+
+for(var in vars) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	v <- get(var)
+\end_layout
+
+\begin_layout Plain Layout
+
+	summary(v)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+Recall: people tend not to use for loops in R and instead prefer the apply()
+ function family for eciency reasons.
 \end_layout
 
 \begin_layout Itemize
@@ -2231,7 +2335,8 @@ http://www.matthieugomez.com/statar/macros.html
 
 \end_deeper
 \begin_layout Itemize
-ggplot2:
+ggplot2: Elegant data visualiztions using the Grammer of Graphics.
+ see here: https://www.rdocumentation.org/packages/ggplot2/versions/3.1.0
 \end_layout
 
 \begin_deeper
@@ -2318,7 +2423,51 @@ status open
 
 \begin_layout Plain Layout
 
-geom_point(data=data_summary)
+library(tidyverse)
+\end_layout
+
+\begin_layout Plain Layout
+
+data <- as_tibble(mtcars)
+\end_layout
+
+\begin_layout Plain Layout
+
+head(data)
+\end_layout
+
+\begin_layout Plain Layout
+
+data$cyl <- factor(data$cyl)
+\end_layout
+
+\begin_layout Plain Layout
+
+means <- data %>% group_by(cyl) %>% summarise(mpg = mean(mpg))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ggplot(data=data, aes(x=disp, y=mpg, color=cyl)) + 
+\end_layout
+
+\begin_layout Plain Layout
+
+  geom_point() + 
+\end_layout
+
+\begin_layout Plain Layout
+
+  geom_hline(data=means, aes(yintercept=mpg))
+\end_layout
+
+\begin_layout Plain Layout
+
+)
 \end_layout
 
 \end_inset
@@ -2330,6 +2479,25 @@ geom_point(data=data_summary)
 geom_point() for scatter.
  setting alpha = 0.4 inside, will make the points 40% visible (or 60% transparent
 ).
+\end_layout
+
+\begin_layout Itemize
+geom_point() has a sahpe argument that takes an inter in [0,25].
+ if we want to manually set it, we need to add scale_shape_identity() like
+ so:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+ggplot(data,aes(x=pop,y=gdp)) + geom_point(aes(shape=11)) + scale_shape_identity
+()
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -2387,6 +2555,72 @@ geom_smooth(method =
  Methods include but are not limited to: auto, lm,glm, gam, loess.
  can also have user specified function (i think).
  
+\end_layout
+
+\begin_layout Itemize
+geom_rect() - to draw recentagles.
+ this geom requires 4 asthetics: xmin, xmax, ymin, ymax - these are the
+ edges of the recentagle.
+ for exmaple to indicate a recession in time series data: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+# Basic line plot
+\end_layout
+
+\begin_layout Plain Layout
+
+ggplot(economics, aes(x = date, y = unemploy/pop)) +
+\end_layout
+
+\begin_layout Plain Layout
+
+  geom_line()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Expand the following command with geom_rect() to draw the recess periods
+\end_layout
+
+\begin_layout Plain Layout
+
+ggplot(economics, aes(x = date, y = unemploy/pop)) +
+\end_layout
+
+\begin_layout Plain Layout
+
+  geom_rect(data = recess,
+\end_layout
+
+\begin_layout Plain Layout
+
+         aes(xmin = begin, xmax = end, ymin = -Inf, ymax = +Inf),
+\end_layout
+
+\begin_layout Plain Layout
+
+         inherit.aes = FALSE, fill = "red", alpha = 0.2) +geom_line()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+geom_dotplot - 
+\emph on
+Dot Plot
+\emph default
+ is a scatter plot where the x axis is catagorical and the y axis is continous.
 \end_layout
 
 \begin_layout Itemize
@@ -2457,25 +2691,6 @@ ggplot(data,aes(x=pop,y=gdp)) + geom_point() + facet_wrap(~ continent)
 \end_layout
 
 \begin_layout Itemize
-geom_point() has a sahpe argument that takes an inter in [0,25].
- if we want to manually set it, we need to add scale_shape_identity() like
- so:
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-ggplot(data,aes(x=pop,y=gdp)) + geom_point(aes(shape=11)) + scale_shape_identity
-()
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
 Asthetics:
 \end_layout
 
@@ -2537,17 +2752,12 @@ From long to wide
 
 \begin_layout Plain Layout
 
-Stata	reshape long stub, i(id) j(variable) string  
+Stata	reshape wide value, i(i) j(variable) string 
 \end_layout
 
 \begin_layout Plain Layout
 
-		 rename stub value 
-\end_layout
-
-\begin_layout Plain Layout
-
-tidyr	gather(dfwide, variable, value, starts_with("stub"))
+tidyr	spread(dflong, variable, value)
 \end_layout
 
 \end_inset
@@ -2565,6 +2775,36 @@ gather() - rearranges the data frame by specifying the columns that are
  categorical variables with a - notation.
  Complete the command.
  
+\begin_inset Newline newline
+\end_inset
+
+From DataCamp: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+gather() takes four arguments: the original data frame (fish.species), the
+ name of the key column (Species), 
+\end_layout
+
+\begin_layout Plain Layout
+
+the name of the value column (Capture) and the name of the grouping variable,
+ with a minus in front (-Year).
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+They can all be specified as object names (i.e.
+ no "").
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -2806,6 +3046,54 @@ factor varaiables need to be defined as such, or run in the model: lm(y
 \end_layout
 
 \begin_layout Itemize
+R has two types of factor variables: ordered and unordered.
+ The default option for ordered factor is to include linear, quadratic and
+ cubic terms in a regression.
+ see which option is on and how to change by:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+> getOption('contrasts')
+\end_layout
+
+\begin_layout Plain Layout
+
+        unordered           ordered 
+\end_layout
+
+\begin_layout Plain Layout
+
+"contr.treatment"      "contr.poly" 
+\end_layout
+
+\begin_layout Plain Layout
+
+> options('contrasts' = c('contr.treatment','contr.treatment') )
+\end_layout
+
+\begin_layout Plain Layout
+
+> getOption('contrasts')
+\end_layout
+
+\begin_layout Plain Layout
+
+[1] "contr.treatment" "contr.treatment"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
 interactions: 
 \begin_inset listings
 inline false
@@ -3021,6 +3309,41 @@ mem_used() - How much memory is currently used by R?
 \begin_layout Itemize
 object_size(df) - Compute the size of an object.
  
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Good questions and advice from around the web:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+https://stackoverflow.com/questions/21269793/extract-formula-from-lm-with-coeffic
+ients-r
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Need to better understand:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+quoting and unqouting, !! opearator, sym() etc.
+ (https://dplyr.tidyverse.org/articles/programming.html)
+\end_layout
+
+\begin_layout Itemize
+The use of ~
+\end_layout
+
+\begin_layout Itemize
+The use of .
+\end_layout
+
+\begin_layout Itemize
+Janitor and tabyl https://github.com/sfirke/janitor/blob/master/vignettes/tabyls.m
+d
 \end_layout
 
 \end_deeper
